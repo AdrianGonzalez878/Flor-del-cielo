@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Great_Vibes, Nunito, Playfair_Display } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 import { brand } from "@/lib/brand";
@@ -55,6 +56,7 @@ export default function RootLayout({
           <MotionProvider>
             {children}
             <WhatsAppFloat />
+            <Analytics />
           </MotionProvider>
         </CartProvider>
       </body>
