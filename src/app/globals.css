@@ -1,26 +1,89 @@
 @import "tailwindcss";
 
+/*
+  Paleta de marca — mantener sincronizada con src/lib/brand.ts
+  (Resend, Sanity Studio, Mercado Pago importan desde ahí en runtime).
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f0f0d8;
+  --foreground: #483018;
+
+  --brand-cream: #f0f0d8;
+  --brand-cream-light: #faf9f2;
+  --brand-brown: #483018;
+  --brand-brown-dark: #301800;
+  --brand-brown-muted: #6b5a48;
+  --brand-gold: #c0a860;
+  --brand-gold-light: #d8c090;
+  --brand-gold-mid: #c09060;
+  --brand-gold-dark: #a08848;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-cream-light: var(--brand-cream-light);
+  --color-brand-brown: var(--brand-brown);
+  --color-brand-brown-dark: var(--brand-brown-dark);
+  --color-brand-brown-muted: var(--brand-brown-muted);
+  --color-brand-gold: var(--brand-gold);
+  --color-brand-gold-light: var(--brand-gold-light);
+  --color-brand-gold-mid: var(--brand-gold-mid);
+  --color-brand-gold-dark: var(--brand-gold-dark);
+
+  --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair-display), ui-serif, Georgia, serif;
+  --font-script: var(--font-great-vibes), cursive;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Precios: Nunito conserva una lectura clara y sus cifras tabulares evitan saltos visuales. */
+.price-number {
+  font-family: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Controles clickeables: cursor consistente en toda la tienda */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+a[href],
+label:has(input[type="radio"]),
+label:has(input[type="checkbox"]),
+select,
+summary {
+  cursor: pointer;
+}
+
+button:disabled,
+[aria-disabled="true"],
+select:disabled {
+  cursor: not-allowed;
 }

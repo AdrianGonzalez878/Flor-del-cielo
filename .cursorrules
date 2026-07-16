@@ -1,0 +1,39 @@
+# Flor del Cielo — reglas para el agente
+
+E-commerce de cosmética artesanal (jabones, shampoos, velas, cremas, aceites).
+Tono visual: orgánico, premium, cálido y natural.
+
+## Marca y diseño (no duplicar aquí)
+
+- **Fuente de verdad:** `src/lib/brand.ts` (colores, fuentes, logo, contacto).
+- **Tokens CSS / Tailwind:** `src/app/globals.css` → clases `brand-*` (ej. `bg-brand-cream`, `text-brand-brown`, `border-brand-gold`).
+- Antes de inventar colores o fuentes, lee `brand.ts`. Usa siempre tokens `brand-*`; no uses `#FFFFFF` en fondos grandes ni `#000000` en textos.
+- Tipografía del proyecto: **Playfair Display** (títulos, `font-serif`) + **Nunito** (cuerpo, `font-sans`) + **Great Vibes** (acento, `font-script`; solo eyebrows/firmas).
+
+## Stack
+
+- **Next.js 16** (App Router), React 19, TypeScript, Tailwind CSS v4.
+- **Sanity** — catálogo y pedidos; Studio en `/studio`.
+- **Framer Motion** — animaciones sutiles (fade-in, slide-up).
+- **Pendiente:** Shadcn UI (formularios/checkout), Mercado Pago, Resend.
+- Dev local: `npm run dev` desde la raíz del repo (usa webpack, no Turbopack).
+- Convenciones Next.js: leer `AGENTS.md` y `node_modules/next/dist/docs/` antes de APIs nuevas.
+
+## Arquitectura del catálogo (Sanity)
+
+- **Tipo de producto** (una opción): jabones, shampoos, velas, cremas, aceites → `src/sanity/categories.ts`.
+- **Colecciones** (varias por producto): familia, bebés, acné, etc. → `src/sanity/collections.ts`.
+- Queries: `src/sanity/queries.ts` · Filtros tienda: `/productos?categoria=&coleccion=`.
+
+## UI / UX
+
+- Mobile first; espaciado generoso; bordes redondeados (`rounded-lg`, `rounded-2xl`); sombras suaves.
+- Tarjetas de producto: animación de entrada con Framer Motion.
+- Componentes modulares en `src/components/` (home, layout, products).
+
+## Código
+
+- Tailwind para estilos; sin CSS inline salvo casos puntuales (ej. `next/image`).
+- Server Components por defecto; `"use client"` solo para interactividad, hooks o Framer Motion.
+- Datos de Sanity en Server Components; pasar props a client components cuando haga falta.
+- Cambios mínimos y enfocados; reutilizar patrones existentes del repo.
