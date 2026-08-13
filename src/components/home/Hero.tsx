@@ -79,7 +79,8 @@ export function Hero() {
             custom={2}
             className="mt-4 max-w-md text-base leading-relaxed text-brand-brown-muted sm:text-lg"
           >
-            Jabones, velas y aceites artesanales con ingredientes naturales.
+            Jabones, shampoos, cremas y sérums elaborados a mano en Oaxaca con
+            herbolaria tradicional.
           </motion.p>
 
           <motion.div

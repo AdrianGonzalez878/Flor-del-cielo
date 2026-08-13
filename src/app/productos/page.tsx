@@ -15,10 +15,12 @@ import {
   countByCollection,
   countByHairNeed,
   countBySkinNeed,
+  filterCatalogProducts,
   filterCatalogProductsRelaxed,
 } from "@/lib/filter-products";
 import { buildCatalogUrl } from "@/lib/catalog-url";
 import { getRelaxationMessage } from "@/lib/catalog-relaxation-message";
+import { getCategory } from "@/sanity/categories";
 import { getAllProducts } from "@/sanity/queries";
 
 export const dynamic = "force-dynamic";
@@ -43,8 +45,14 @@ export default async function ProductosPage({ searchParams }: PageProps) {
 
   const categoryCounts = countByCategory(activeProducts);
   const collectionCounts = countByCollection(activeProducts);
-  const skinNeedCounts = countBySkinNeed(activeProducts);
-  const hairNeedCounts = countByHairNeed(activeProducts);
+  /** Las necesidades se cuentan dentro de la línea y colección elegidas. */
+  const needScope = filterCatalogProducts(activeProducts, {
+    categoria,
+    coleccion,
+    q,
+  });
+  const skinNeedCounts = countBySkinNeed(needScope);
+  const hairNeedCounts = countByHairNeed(needScope);
 
   const { products, relaxation } = filterCatalogProductsRelaxed(activeProducts, {
     categoria,
@@ -59,6 +67,10 @@ export default async function ProductosPage({ searchParams }: PageProps) {
     { categoria, coleccion, piel, cabello },
     from === "quiz",
   );
+
+  const activeCategoryInfo = getCategory(categoria);
+  const categoryDescription = activeCategoryInfo?.description;
+  const categoryPresentation = activeCategoryInfo?.presentation;
 
   const searchQuery = q?.trim();
   const pageTitle = searchQuery
@@ -101,8 +113,14 @@ export default async function ProductosPage({ searchParams }: PageProps) {
             <p className="mt-2 text-sm leading-relaxed text-brand-brown-muted sm:mt-3 sm:text-base">
               {searchQuery
                 ? "Productos que coinciden con tu búsqueda."
-                : "Explora por colección, tipo de producto o necesidad."}
+                : (categoryDescription ??
+                  "Explora por colección, tipo de producto o necesidad.")}
             </p>
+            {!searchQuery && categoryPresentation && (
+              <p className="mt-1 text-sm text-brand-gold-dark">
+                Presentación de la línea: {categoryPresentation}
+              </p>
+            )}
           </Reveal>
 
           <div className="mt-7 rounded-2xl border border-brand-gold/20 bg-brand-cream-light/60 p-4 sm:mt-10 sm:rounded-none sm:border-0 sm:bg-transparent sm:p-0 lg:flex lg:gap-12">

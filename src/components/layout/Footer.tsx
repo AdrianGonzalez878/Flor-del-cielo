@@ -3,7 +3,10 @@ import Link from "next/link";
 
 import { buildCatalogUrl } from "@/lib/catalog-url";
 import { brand } from "@/lib/brand";
-import { PRODUCT_CATEGORIES } from "@/sanity/categories";
+import {
+  PRODUCT_CATEGORIES,
+  type CategoryGroupSlug,
+} from "@/sanity/categories";
 import { PRODUCT_COLLECTIONS } from "@/sanity/collections";
 
 const featuredCollections = PRODUCT_COLLECTIONS.filter((c) =>
@@ -11,6 +14,13 @@ const featuredCollections = PRODUCT_COLLECTIONS.filter((c) =>
     c.value,
   ),
 );
+
+/** Las 14 líneas agrupadas en tres columnas para no alargar el pie. */
+const categoryColumns: { title: string; groups: CategoryGroupSlug[] }[] = [
+  { title: "Piel y rostro", groups: ["cuerpo", "rostro"] },
+  { title: "Cabello", groups: ["cabello"] },
+  { title: "Bienestar y familia", groups: ["bienestar", "higiene", "bebes"] },
+];
 
 function FooterLink({
   href,
@@ -70,8 +80,7 @@ export function Footer() {
               {brand.tagline}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-brand-gold-light/80">
-              {brand.description} Hechos a mano con ingredientes naturales y
-              mucho cariño en cada detalle.
+              {brand.essence}
             </p>
             <div className="mt-5 space-y-3">
               <a
@@ -88,13 +97,21 @@ export function Footer() {
                 <PhoneIcon />
                 {brand.contact.phoneDisplay}
               </a>
+              <a
+                href={brand.contact.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-sm font-medium text-brand-cream-light transition-colors hover:text-brand-gold-light"
+              >
+                <InstagramIcon />@{brand.contact.instagram}
+              </a>
             </div>
 
             <ul className="mt-6 flex flex-wrap gap-2">
               {[
-                "Hecho a mano",
+                "Hecho a mano en Oaxaca",
+                "Lotes pequeños",
                 "Envío $99 · gratis desde $700",
-                "Pago seguro",
               ].map((badge) => (
                 <li
                   key={badge}
@@ -107,7 +124,7 @@ export function Footer() {
           </div>
 
           <nav
-            className="grid grid-cols-2 gap-8 sm:grid-cols-4"
+            className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5"
             aria-label="Pie de página"
           >
             <FooterColumn title="Explorar">
@@ -115,7 +132,7 @@ export function Footer() {
                 <FooterLink href="/">Inicio</FooterLink>
               </li>
               <li>
-                <FooterLink href="/productos">Productos</FooterLink>
+                <FooterLink href="/productos">Todo el catálogo</FooterLink>
               </li>
               <li>
                 <FooterLink href="/test">Test</FooterLink>
@@ -126,43 +143,29 @@ export function Footer() {
                 </FooterLink>
               </li>
               <li>
-                <FooterLink href="/carrito">Carrito</FooterLink>
-              </li>
-            </FooterColumn>
-
-            <FooterColumn title="Tienda">
-              <li>
-                <FooterLink href="/productos">Ver catálogo</FooterLink>
-              </li>
-              <li>
-                <FooterLink href="/#categorias">Categorías</FooterLink>
+                <FooterLink href="/#eventos">Eventos y regalos</FooterLink>
               </li>
               <li>
                 <FooterLink href="/#nosotros">Nuestra esencia</FooterLink>
               </li>
               <li>
-                <FooterLink href={buildCatalogUrl({ coleccion: "mas-vendido" })}>
-                  Lo más vendido
-                </FooterLink>
-              </li>
-              <li>
-                <FooterLink href={buildCatalogUrl({ coleccion: "novedades" })}>
-                  Novedades
-                </FooterLink>
+                <FooterLink href="/carrito">Carrito</FooterLink>
               </li>
             </FooterColumn>
 
-            <FooterColumn title="Categorías">
-              {PRODUCT_CATEGORIES.map((cat) => (
-                <li key={cat.value}>
-                  <FooterLink
-                    href={buildCatalogUrl({ categoria: cat.value })}
-                  >
-                    {cat.title}
-                  </FooterLink>
-                </li>
-              ))}
-            </FooterColumn>
+            {categoryColumns.map((column) => (
+              <FooterColumn key={column.title} title={column.title}>
+                {PRODUCT_CATEGORIES.filter((cat) =>
+                  column.groups.includes(cat.group),
+                ).map((cat) => (
+                  <li key={cat.value}>
+                    <FooterLink href={buildCatalogUrl({ categoria: cat.value })}>
+                      {cat.title}
+                    </FooterLink>
+                  </li>
+                ))}
+              </FooterColumn>
+            ))}
 
             <FooterColumn title="Colecciones">
               {featuredCollections.map((col) => (
@@ -174,6 +177,9 @@ export function Footer() {
                   </FooterLink>
                 </li>
               ))}
+              <li>
+                <FooterLink href="/#categorias">Categorías</FooterLink>
+              </li>
               <li>
                 <FooterLink href="/productos">Ver todas →</FooterLink>
               </li>
@@ -218,6 +224,31 @@ function PhoneIcon() {
         strokeWidth="1.5"
         strokeLinejoin="round"
       />
+    </svg>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden
+      className="shrink-0 text-brand-gold"
+    >
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" />
     </svg>
   );
 }

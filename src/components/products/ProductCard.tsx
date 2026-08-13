@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 import { getSanityImageUrl, isSanityImageUrl } from "@/lib/sanity-image";
+import { getCategory, type CategoryGroupSlug } from "@/sanity/categories";
 import type { Product } from "@/sanity/queries";
 
 type Props = {
@@ -13,17 +14,18 @@ type Props = {
   animate?: boolean;
 };
 
-const accentByCategory: Record<string, string> = {
-  jabones: "bg-brand-gold-light/50",
-  aceites: "bg-brand-cream",
-  velas: "bg-brand-gold/20",
-  shampoos: "bg-brand-gold-mid/20",
-  cremas: "bg-brand-gold-light/40",
+const accentByGroup: Record<CategoryGroupSlug, string> = {
+  cuerpo: "bg-brand-gold-light/45",
+  cabello: "bg-brand-gold-mid/20",
+  rostro: "bg-brand-cream",
+  bienestar: "bg-brand-gold/20",
+  higiene: "bg-brand-gold-light/30",
+  bebes: "bg-brand-gold-light/55",
 };
 
 export function ProductCard({ product, index = 0, animate = true }: Props) {
-  const accent =
-    accentByCategory[product.category?.slug ?? ""] ?? "bg-brand-cream";
+  const group = getCategory(product.category?.slug)?.group;
+  const accent = group ? accentByGroup[group] : "bg-brand-cream";
   const showPlaceholder = !product.mainImage?.url;
 
   const card = (
@@ -41,7 +43,7 @@ export function ProductCard({ product, index = 0, animate = true }: Props) {
             <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-brand-gold/10" />
             <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-brand-gold/10" />
             <div className="relative z-10 flex h-full flex-col items-center justify-center gap-2 opacity-40 transition-opacity group-hover:opacity-60">
-              <ProductIcon category={product.category?.name ?? ""} />
+              <ProductIcon group={group} />
               <span className="text-xs font-medium text-brand-brown">
                 Foto próximamente
               </span>
@@ -127,40 +129,62 @@ export function ProductCard({ product, index = 0, animate = true }: Props) {
   );
 }
 
-function ProductIcon({ category }: { category: string }) {
-  const c = category.toLowerCase();
-  if (c.includes("jab")) {
+function ProductIcon({ group }: { group?: CategoryGroupSlug }) {
+  const props = {
+    width: 48,
+    height: 48,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    className: "text-brand-brown",
+  } as const;
+
+  if (group === "cabello") {
     return (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-brand-brown">
-        <rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M8 8V6a4 4 0 0 1 8 0v2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M9 14h6M9 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg {...props}>
+        <path d="M10 3h4v3h-4V3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <rect x="7" y="6" width="10" height="15" rx="2.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M9.5 11h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     );
   }
-  if (c.includes("aceit")) {
+  if (group === "rostro") {
     return (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-brand-brown">
-        <path d="M9 3h6l1 5H8L9 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-        <rect x="6" y="8" width="12" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M10 14c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" stroke="currentColor" strokeWidth="1.5" />
+      <svg {...props}>
+        <path d="M9 3h6M12 3v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M9 7h6l-1 13.5a1.5 1.5 0 0 1-1.5 1.5h-1a1.5 1.5 0 0 1-1.5-1.5L9 7z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M10.3 14h3.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     );
   }
-  if (c.includes("vela")) {
+  if (group === "bienestar") {
     return (
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-brand-brown">
-        <path d="M12 2c0 0-2 2-2 4s2 3 2 3 2-1 2-3-2-4-2-4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-        <rect x="8" y="9" width="8" height="12" rx="1" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M6 21h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg {...props}>
+        <path d="M12 2s-2 2-2 3.8C10 7.2 12 8 12 8s2-.8 2-2.2C14 4 12 2 12 2z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <rect x="7" y="9" width="10" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M5 21h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    );
+  }
+  if (group === "higiene") {
+    return (
+      <svg {...props}>
+        <path d="M9 3h6l-1 3h-4L9 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        <path d="M10 6h4l1 12a3 3 0 0 1-3 3 3 3 0 0 1-3-3L10 6z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      </svg>
+    );
+  }
+  if (group === "bebes") {
+    return (
+      <svg {...props}>
+        <path d="M12 20.5S4.5 16 4.5 10.4A4 4 0 0 1 12 8.4a4 4 0 0 1 7.5 2c0 5.6-7.5 10.1-7.5 10.1z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
       </svg>
     );
   }
   return (
-    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" className="text-brand-brown">
-      <path d="M7 3h10l2 4H5L7 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-      <rect x="4" y="7" width="16" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M9 13h6M9 16h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    <svg {...props}>
+      <rect x="4" y="8" width="16" height="12" rx="2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M8 8V6a4 4 0 0 1 8 0v2" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M9 14h6M9 17h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
     </svg>
   );
 }

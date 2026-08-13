@@ -5,6 +5,8 @@ export const PRODUCT_COLLECTIONS = [
   { title: "Lo más vendido", value: "mas-vendido" },
   { title: "Novedades", value: "novedades" },
   { title: "Rutina diaria", value: "rutina-diaria" },
+  { title: "Herbolaria tradicional", value: "herbolaria-tradicional" },
+  { title: "Formatos sólidos", value: "solidos" },
 ] as const;
 
 export type ProductCollectionSlug =

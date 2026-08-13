@@ -8,12 +8,15 @@ import { useEffect, useRef, useState } from "react";
 import { useCart } from "@/components/cart/CartProvider";
 import { NavbarSearch } from "@/components/layout/NavbarSearch";
 import { buildCatalogUrl } from "@/lib/catalog-url";
-import { PRODUCT_CATEGORIES } from "@/sanity/categories";
+import { getCategoriesByGroup } from "@/sanity/categories";
+
+const categoryGroups = getCategoriesByGroup();
 
 const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/test", label: "Test" },
   { href: "/puntos-de-entrega", label: "Puntos de entrega" },
+  { href: "/#eventos", label: "Eventos" },
 ] as const;
 
 function linkClassName(active: boolean) {
@@ -111,47 +114,52 @@ function ProductsDropdown({ onNavigate }: { onNavigate?: () => void }) {
       <div
         role="menu"
         aria-label="Tipos de producto"
-        className={`absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 transition-all ${
+        className={`absolute left-1/2 top-full z-50 w-[42rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 pt-3 transition-all ${
           open
             ? "pointer-events-auto opacity-100"
             : "pointer-events-none opacity-0"
         }`}
       >
         <div className="overflow-hidden rounded-2xl border border-brand-gold/30 bg-brand-cream-light shadow-lg shadow-brand-brown/10">
-          <ul className="py-1.5">
-            <li>
-              <Link
-                href="/productos"
-                role="menuitem"
-                onClick={() => {
-                  setOpen(false);
-                  onNavigate?.();
-                }}
-                className="block px-4 py-2.5 text-sm font-semibold text-brand-brown transition-colors hover:bg-brand-cream"
-              >
-                Ver todo el catálogo
-              </Link>
-            </li>
-            <li
-              className="mx-3 my-1 border-t border-brand-gold/20"
-              aria-hidden
-            />
-            {PRODUCT_CATEGORIES.map((category) => (
-              <li key={category.value}>
-                <Link
-                  href={buildCatalogUrl({ categoria: category.value })}
-                  role="menuitem"
-                  onClick={() => {
-                    setOpen(false);
-                    onNavigate?.();
-                  }}
-                  className="block px-4 py-2.5 text-sm text-brand-brown-muted transition-colors hover:bg-brand-cream hover:text-brand-brown"
-                >
-                  {category.title}
-                </Link>
-              </li>
+          <div className="grid grid-cols-3 gap-x-4 gap-y-5 p-5">
+            {categoryGroups.map((group) => (
+              <div key={group.value}>
+                <p className="text-xs font-semibold uppercase tracking-widest text-brand-gold-dark">
+                  {group.title}
+                </p>
+                <ul className="mt-2 space-y-0.5">
+                  {group.categories.map((category) => (
+                    <li key={category.value}>
+                      <Link
+                        href={buildCatalogUrl({ categoria: category.value })}
+                        role="menuitem"
+                        onClick={() => {
+                          setOpen(false);
+                          onNavigate?.();
+                        }}
+                        className="block rounded-lg px-2 py-1.5 text-sm text-brand-brown-muted transition-colors hover:bg-brand-cream hover:text-brand-brown"
+                      >
+                        {category.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
+          <div className="border-t border-brand-gold/20">
+            <Link
+              href="/productos"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                onNavigate?.();
+              }}
+              className="block px-5 py-3 text-sm font-semibold text-brand-brown transition-colors hover:bg-brand-cream"
+            >
+              Ver todo el catálogo →
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -203,22 +211,31 @@ function MobileProductsSection({ onNavigate }: { onNavigate: () => void }) {
       <div
         id="mobile-product-types"
         className={`overflow-hidden transition-[max-height,opacity] duration-300 ${
-          open ? "mt-2 max-h-80 opacity-100" : "max-h-0 opacity-0"
+          open ? "mt-2 max-h-[32rem] opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <ul className="space-y-0.5 rounded-xl border border-brand-gold/20 bg-brand-cream/70 p-2">
-          {PRODUCT_CATEGORIES.map((category) => (
-            <li key={category.value}>
-              <Link
-                href={buildCatalogUrl({ categoria: category.value })}
-                onClick={onNavigate}
-                className="block rounded-lg px-3 py-2 text-sm text-brand-brown-muted transition-colors hover:bg-brand-cream-light hover:text-brand-brown"
-              >
-                {category.title}
-              </Link>
-            </li>
+        <div className="space-y-3 rounded-xl border border-brand-gold/20 bg-brand-cream/70 p-3">
+          {categoryGroups.map((group) => (
+            <div key={group.value}>
+              <p className="px-1 text-[11px] font-semibold uppercase tracking-widest text-brand-gold-dark">
+                {group.title}
+              </p>
+              <ul className="mt-1 space-y-0.5">
+                {group.categories.map((category) => (
+                  <li key={category.value}>
+                    <Link
+                      href={buildCatalogUrl({ categoria: category.value })}
+                      onClick={onNavigate}
+                      className="block rounded-lg px-3 py-2 text-sm text-brand-brown-muted transition-colors hover:bg-brand-cream-light hover:text-brand-brown"
+                    >
+                      {category.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </div>
   );
@@ -294,7 +311,9 @@ export function Navbar() {
       <div
         id="mobile-menu"
         className={`overflow-hidden border-t border-brand-gold/20 bg-brand-cream-light transition-[max-height,opacity] duration-300 lg:hidden ${
-          menuOpen ? "max-h-[28rem] opacity-100" : "max-h-0 opacity-0"
+          menuOpen
+            ? "max-h-[80vh] overflow-y-auto opacity-100"
+            : "max-h-0 opacity-0"
         }`}
       >
         <nav

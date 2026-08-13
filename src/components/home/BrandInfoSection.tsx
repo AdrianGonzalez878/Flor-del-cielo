@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
+import { brand } from "@/lib/brand";
+
 /** Sube este número cuando reemplaces public/brand/informativa.jpg */
 const BRAND_IMAGE_VERSION = "1";
 const BRAND_IMAGE_SRC = `/brand/informativa.jpg?v=${BRAND_IMAGE_VERSION}`;
@@ -50,27 +52,26 @@ export function BrandInfoSection() {
               Nuestra esencia
             </p>
             <h2 className="mt-2 font-serif text-3xl font-semibold text-brand-brown sm:text-4xl">
-              Cosmética artesanal que cuida de ti
+              Herbolaria tradicional en manos artesanas
             </h2>
 
             <p className="mt-4 leading-relaxed text-brand-brown-muted lg:hidden">
-              Productos honestos, elaborados a mano en lotes pequeños, con
-              ingredientes naturales y sin químicos agresivos. Cuidamos cada
-              pedido para que llegue bien a cualquier rincón de México.
+              Cosmética natural elaborada en Oaxaca, donde los saberes
+              ancestrales cobran vida para crear un cuidado consciente,
+              ecosustentable y en armonía con tu piel.
             </p>
 
             <div className="mt-4 hidden space-y-4 leading-relaxed text-brand-brown-muted lg:block">
+              <p>{brand.essence}</p>
               <p>
-                En Flor del Cielo creemos en productos honestos: elaborados a
-                mano, en lotes pequeños y con procesos cuidadosos. Seleccionamos
-                ingredientes naturales y evitamos químicos agresivos que irriten
-                tu piel.
+                Cada producto se prepara en pequeños lotes, cuidando la
+                selección de ingredientes, la textura, el aroma y la experiencia
+                de uso: jabones saponificados a mano, shampoos herbales,
+                mantequillas corporales, sérums, pomadas de masaje y línea
+                dermosuave para bebés.
               </p>
-              <p>
-                Jabones, velas, cremas y más: fórmulas suaves para distintas
-                necesidades — piel sensible, bebés, rutina diaria y momentos de
-                bienestar. Cada pedido lo preparamos con cariño para que llegue
-                bien a cualquier rincón de México.
+              <p className="font-script text-2xl text-brand-gold-dark">
+                Cuidado natural, hecho con calma y propósito.
               </p>
             </div>
 

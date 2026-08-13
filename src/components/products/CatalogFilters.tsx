@@ -247,9 +247,16 @@ export function NeedFilters({
   const isHair = categorySupportsHairNeeds(activeCategory);
   if (!isSkin && !isHair) return null;
 
-  const needs = isSkin ? SKIN_NEEDS : HAIR_NEEDS;
   const activeNeed = isSkin ? activeSkinNeed : activeHairNeed;
   const counts = isSkin ? skinNeedCounts : hairNeedCounts;
+  const allNeeds: readonly { title: string; value: string }[] = isSkin
+    ? SKIN_NEEDS
+    : HAIR_NEEDS;
+  /** Solo necesidades presentes en los productos de la vista actual. */
+  const needs = allNeeds.filter(
+    (need) => need.value === activeNeed || (counts?.[need.value] ?? 0) > 0,
+  );
+  if (needs.length === 0) return null;
 
   return (
     <div className="mt-6 border-t border-brand-gold/20 pt-5">

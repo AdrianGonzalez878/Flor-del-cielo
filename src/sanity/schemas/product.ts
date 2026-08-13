@@ -1,10 +1,12 @@
 import { defineField, defineType } from "sanity";
 
-import { PRODUCT_CATEGORIES, getCategoryLabel } from "../categories";
+import { getCategoryLabel, getCategoryOptions } from "../categories";
 import { PRODUCT_COLLECTIONS, getCollectionLabel } from "../collections";
 import {
   HAIR_NEEDS,
   SKIN_NEEDS,
+  categorySupportsHairNeeds,
+  categorySupportsSkinNeeds,
   getHairNeedLabel,
   getSkinNeedLabel,
 } from "../needs";
@@ -31,11 +33,10 @@ export const productType = defineType({
       name: "category",
       title: "Tipo de producto",
       type: "string",
-      description: "Qué es el producto: jabón, vela, crema, etc.",
+      description: "Línea a la que pertenece: jabones, shampoo sólido, sérums…",
       options: {
-        list: [...PRODUCT_CATEGORIES],
-        layout: "radio",
-        direction: "vertical",
+        list: getCategoryOptions(),
+        layout: "dropdown",
       },
       validation: (r) => r.required(),
     }),
@@ -65,8 +66,7 @@ export const productType = defineType({
         list: [...SKIN_NEEDS],
         layout: "grid",
       },
-      hidden: ({ parent }) =>
-        !["jabones", "cremas", "aceites"].includes(parent?.category),
+      hidden: ({ parent }) => !categorySupportsSkinNeeds(parent?.category),
     }),
     defineField({
       name: "hairNeeds",
@@ -79,7 +79,7 @@ export const productType = defineType({
         list: [...HAIR_NEEDS],
         layout: "grid",
       },
-      hidden: ({ parent }) => parent?.category !== "shampoos",
+      hidden: ({ parent }) => !categorySupportsHairNeeds(parent?.category),
     }),
     defineField({
       name: "shortDescription",

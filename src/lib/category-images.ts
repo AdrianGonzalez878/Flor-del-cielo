@@ -1,7 +1,8 @@
 import type { ProductCategorySlug } from "@/sanity/categories";
 
 export type CategoryVisual = {
-  imageUrl: string;
+  /** `null` cuando no hay foto: la tarjeta usa un fondo de marca. */
+  imageUrl: string | null;
   alt: string;
   /** Recorte cuando se usa una imagen compartida de respaldo */
   objectPosition?: string;
@@ -11,7 +12,9 @@ export type CategoryVisual = {
  * Imágenes por categoría en `public/categories/{slug}.jpg`.
  * Tienen prioridad sobre fotos de productos en Sanity.
  */
-export const CATEGORY_STATIC_IMAGES: Record<ProductCategorySlug, string> = {
+export const CATEGORY_STATIC_IMAGES: Partial<
+  Record<ProductCategorySlug, string>
+> = {
   jabones: "/categories/jabones.jpg",
   shampoos: "/categories/shampoos.jpg",
   velas: "/categories/velas.jpg",
@@ -36,5 +39,5 @@ export function resolveCategoryVisual(
     };
   }
 
-  return { imageUrl: "/hero-desktop.jpg", alt: title };
+  return { imageUrl: null, alt: title };
 }

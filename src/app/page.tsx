@@ -2,6 +2,7 @@ import { BenefitsStrip } from "@/components/home/BenefitsStrip";
 import { BestSellers } from "@/components/home/BestSellers";
 import { BrandInfoSection } from "@/components/home/BrandInfoSection";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
+import { EventsSection } from "@/components/home/EventsSection";
 import { Hero } from "@/components/home/Hero";
 import { HomeCategoryShowcase } from "@/components/home/HomeCategoryShowcase";
 import { NewArrivals } from "@/components/home/NewArrivals";
@@ -24,6 +25,7 @@ export default function Home() {
         <BrandInfoSection />
         <HomeCategoryShowcase />
         <Testimonials />
+        <EventsSection />
       </main>
       <Footer />
     </>

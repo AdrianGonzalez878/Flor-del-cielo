@@ -11,28 +11,20 @@ import {
 import { getSanityImageUrl, isSanityImageUrl } from "@/lib/sanity-image";
 import { PRODUCT_CATEGORIES } from "@/sanity/categories";
 
-const categoryMeta: Record<string, { description: string }> = {
-  jabones: { description: "Aromas suaves y fórmulas gentiles." },
-  shampoos: { description: "Cuidado capilar natural." },
-  velas: { description: "Fragancias que abrazan tu espacio." },
-  cremas: { description: "Hidratación para piel sensible." },
-  aceites: { description: "Esencias botánicas y bienestar." },
-};
+type Covers = Record<string, { url: string; alt?: string }>;
 
 function CategoryCard({
   title,
   value,
-  description,
   visual,
-  compact = false,
 }: {
   title: string;
   value: string;
-  description: string;
   visual: CategoryVisual;
-  compact?: boolean;
 }) {
-  const isSanity = isSanityImageUrl(visual.imageUrl);
+  const isSanity = visual.imageUrl
+    ? isSanityImageUrl(visual.imageUrl)
+    : false;
 
   return (
     <Link
@@ -40,43 +32,47 @@ function CategoryCard({
       className="group flex h-full flex-col overflow-hidden rounded-2xl border border-brand-gold/30 bg-brand-cream-light transition-all hover:border-brand-gold hover:shadow-lg hover:shadow-brand-brown/10"
     >
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-cream">
-        <Image
-          src={getSanityImageUrl(visual.imageUrl, compact ? 480 : 640)}
-          alt={visual.alt}
-          fill
-          sizes={compact ? "40vw" : "(max-width: 640px) 50vw, 20vw"}
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
-          style={
-            visual.objectPosition
-              ? { objectPosition: visual.objectPosition }
-              : undefined
-          }
-          unoptimized={isSanity}
-        />
+        {visual.imageUrl ? (
+          <Image
+            src={getSanityImageUrl(visual.imageUrl, 480)}
+            alt={visual.alt}
+            fill
+            sizes="(max-width: 640px) 40vw, 15vw"
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            style={
+              visual.objectPosition
+                ? { objectPosition: visual.objectPosition }
+                : undefined
+            }
+            unoptimized={isSanity}
+          />
+        ) : (
+          <div
+            className="absolute inset-0 bg-gradient-to-br from-brand-gold-light/60 via-brand-cream to-brand-gold/25"
+            aria-hidden
+          >
+            <span className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-brand-gold/15" />
+            <span className="absolute -bottom-8 -left-8 h-28 w-28 rounded-full bg-brand-gold/10" />
+          </div>
+        )}
+
         <div
-          className="absolute inset-0 bg-gradient-to-t from-brand-brown/55 via-brand-brown/10 to-transparent"
+          className={`absolute inset-0 ${
+            visual.imageUrl
+              ? "bg-gradient-to-t from-brand-brown/55 via-brand-brown/10 to-transparent"
+              : "bg-gradient-to-t from-brand-brown/45 via-brand-brown/5 to-transparent"
+          }`}
           aria-hidden
         />
-        <h3 className="absolute bottom-3 left-3 right-3 font-serif text-base font-semibold text-brand-cream-light drop-shadow-sm sm:bottom-4 sm:left-4 sm:right-4 sm:text-xl">
+        <h3 className="absolute bottom-3 left-3 right-3 font-serif text-base font-semibold text-brand-cream-light drop-shadow-sm sm:bottom-4 sm:left-4 sm:right-4 sm:text-lg">
           {title}
         </h3>
       </div>
-
-      {!compact && (
-        <div className="p-4 sm:p-5">
-          <p className="text-sm leading-relaxed text-brand-brown-muted">
-            {description}
-          </p>
-          <span className="mt-3 inline-block text-sm font-semibold text-brand-gold-dark group-hover:underline">
-            Ver productos →
-          </span>
-        </div>
-      )}
     </Link>
   );
 }
 
-export function CategoryGridView() {
+export function CategoryGridView({ covers = {} }: { covers?: Covers }) {
   return (
     <section
       id="categorias"
@@ -96,57 +92,58 @@ export function CategoryGridView() {
           <h2 className="mt-2 font-serif text-3xl font-semibold text-brand-brown sm:text-4xl">
             ¿Qué estás buscando?
           </h2>
+          <p className="mt-3 leading-relaxed text-brand-brown-muted">
+            Del jabón de tepezcohuite a los sérums, las pomadas de masaje y la
+            línea dermosuave para bebés.
+          </p>
         </motion.div>
 
         <ul
           className="-mx-4 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] sm:hidden [&::-webkit-scrollbar]:hidden"
           aria-label="Categorías de productos"
         >
-          {PRODUCT_CATEGORIES.map((cat, i) => {
-            const meta = categoryMeta[cat.value];
-            const visual = resolveCategoryVisual(cat.value, cat.title);
-            return (
-              <motion.li
-                key={cat.value}
-                className="w-[36vw] shrink-0 snap-start"
-                initial={{ x: -24 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.45 }}
-              >
-                <CategoryCard
-                  title={cat.title}
-                  value={cat.value}
-                  description={meta.description}
-                  visual={visual}
-                  compact
-                />
-              </motion.li>
-            );
-          })}
+          {PRODUCT_CATEGORIES.map((cat, i) => (
+            <motion.li
+              key={cat.value}
+              className="w-[36vw] shrink-0 snap-start"
+              initial={{ x: -24 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: Math.min(i, 5) * 0.06, duration: 0.45 }}
+            >
+              <CategoryCard
+                title={cat.title}
+                value={cat.value}
+                visual={resolveCategoryVisual(
+                  cat.value,
+                  cat.title,
+                  covers[cat.value],
+                )}
+              />
+            </motion.li>
+          ))}
         </ul>
 
-        <ul className="mt-10 hidden gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-          {PRODUCT_CATEGORIES.map((cat, i) => {
-            const meta = categoryMeta[cat.value];
-            const visual = resolveCategoryVisual(cat.value, cat.title);
-            return (
-              <motion.li
-                key={cat.value}
-                initial={{ y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06, duration: 0.45 }}
-              >
-                <CategoryCard
-                  title={cat.title}
-                  value={cat.value}
-                  description={meta.description}
-                  visual={visual}
-                />
-              </motion.li>
-            );
-          })}
+        <ul className="mt-10 hidden gap-4 sm:grid sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-7">
+          {PRODUCT_CATEGORIES.map((cat, i) => (
+            <motion.li
+              key={cat.value}
+              initial={{ y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: Math.min(i, 6) * 0.05, duration: 0.45 }}
+            >
+              <CategoryCard
+                title={cat.title}
+                value={cat.value}
+                visual={resolveCategoryVisual(
+                  cat.value,
+                  cat.title,
+                  covers[cat.value],
+                )}
+              />
+            </motion.li>
+          ))}
         </ul>
       </div>
     </section>

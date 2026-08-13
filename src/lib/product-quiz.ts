@@ -3,6 +3,8 @@ import type { Product } from "@/sanity/queries";
 import {
   HAIR_NEEDS,
   SKIN_NEEDS,
+  categorySupportsHairNeeds,
+  categorySupportsSkinNeeds,
   getHairNeedLabel,
   getSkinNeedLabel,
 } from "@/sanity/needs";
@@ -86,12 +88,10 @@ const contextQuestion: QuizQuestion = {
 };
 
 function productsForFocus(products: Product[], focus: QuizFocus): Product[] {
-  if (focus === "cabello") {
-    return products.filter((product) => product.category?.slug === "shampoos");
-  }
-  return products.filter((product) =>
-    ["jabones", "cremas", "aceites"].includes(product.category?.slug ?? ""),
-  );
+  const matchesFocus =
+    focus === "cabello" ? categorySupportsHairNeeds : categorySupportsSkinNeeds;
+
+  return products.filter((product) => matchesFocus(product.category?.slug));
 }
 
 function availableNeedOptions(
@@ -153,10 +153,30 @@ function tipForNeed(focus: QuizFocus, need: string): string {
       "Prueba una pequeña cantidad primero y evita combinar muchos productos nuevos a la vez.",
     "acne-piel-grasa":
       "La limpieza debe ser suave: tallar con fuerza puede irritar y alterar la barrera de la piel.",
+    "piel-normal-mixta":
+      "Alterna texturas ligeras en la zona T y más nutritivas donde sientas resequedad.",
     hidratacion:
       "La constancia suele dar mejores resultados que aplicar demasiado producto de una sola vez.",
+    "piel-madura":
+      "Combina limpieza suave por la noche con un producto nutritivo antes de dormir.",
+    "manchas-tono":
+      "Los cambios de tono son graduales; acompaña tu rutina con protección solar diaria.",
+    "limpieza-facial":
+      "Retira el maquillaje con aceite y termina con una limpieza suave para no resecar.",
+    "contorno-ojos":
+      "Aplica con toques ligeros desde el ángulo externo hacia el interno, sin estirar la piel.",
+    "exposicion-solar":
+      "Después del sol, hidrata sobre piel fresca y limpia para calmar la sensación de tirantez.",
+    "masaje-relajacion":
+      "Calienta el producto entre las manos antes de aplicarlo para una sensación más envolvente.",
+    "tension-muscular":
+      "Masajea con movimientos circulares y evita aplicarlo sobre heridas o piel irritada.",
     "cuidado-piernas":
       "Acompaña el masaje con movimientos ascendentes y evita aplicarlo sobre piel lesionada.",
+    "piel-bebe":
+      "Prueba primero en una zona pequeña y evita el contacto directo con los ojos.",
+    "cabello-normal":
+      "Alterna fórmulas suaves y evita lavados con agua muy caliente.",
     "cabello-seco":
       "Concentra el lavado en el cuero cabelludo y evita frotar demasiado las puntas.",
     "cabello-opaco":
@@ -165,10 +185,18 @@ function tipForNeed(focus: QuizFocus, need: string): string {
       "Alterna limpieza suave con descanso de herramientas térmicas y procesos químicos.",
     frizz:
       "Evita frotar el cabello con la toalla; presiónalo suavemente para retirar el exceso de agua.",
+    "cabello-rizado":
+      "Desenreda con el cabello húmedo y define con las manos para respetar el rizo.",
     "cabello-delicado":
       "Masajea con las yemas de los dedos y desenreda sin tirones.",
+    "cabello-claro":
+      "Prefiere fórmulas suaves de uso frecuente y enjuaga con agua tibia.",
+    "cabello-oscuro":
+      "Las fórmulas con henna, nogal o índigo realzan el tono de forma gradual.",
     "cuero-cabelludo-sensible":
       "Usa agua tibia y suspende el producto si notas irritación persistente.",
+    "cuero-cabelludo-graso":
+      "Enjuaga muy bien la raíz; el exceso de producto puede aumentar la sensación grasa.",
     "crecimiento-fortalecimiento":
       "La constancia y un masaje suave del cuero cabelludo complementan tu rutina.",
   };
@@ -225,7 +253,6 @@ export function getQuizResult(
 
   const needLabel =
     focus === "piel" ? getSkinNeedLabel(need) : getHairNeedLabel(need);
-  const categoria = focus === "cabello" ? "shampoos" : undefined;
 
   return {
     title: `Tu selección para ${needLabel.toLowerCase()}`,
@@ -235,7 +262,6 @@ export function getQuizResult(
         : "Todavía no tenemos una coincidencia exacta, pero puedes explorar el catálogo completo.",
     tip: tipForNeed(focus, need),
     catalogUrl: buildCatalogUrl({
-      categoria,
       coleccion: collection,
       piel: focus === "piel" ? need : undefined,
       cabello: focus === "cabello" ? need : undefined,

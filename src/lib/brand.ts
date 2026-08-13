@@ -14,7 +14,11 @@ export const brand = {
   legalName: "Flor del Cielo",
   tagline: "Cosmética artesanal",
   description:
-    "Jabones, shampoos, velas, cremas y más productos artesanales hechos a mano.",
+    "Cosmética natural inspirada en la herbolaria tradicional y elaborada a mano en Oaxaca: jabones, shampoos, cremas, sérums, pomadas y cuidado dermosuave.",
+  /** Texto oficial de marca (lista de productos, julio 2026). */
+  essence:
+    "Cosmética natural inspirada en la herbolaria tradicional, donde los saberes ancestrales cobran vida en manos artesanas oaxaqueñas para crear un cuidado consciente, ecosustentable y en armonía con la piel, la comunidad y la naturaleza.",
+  city: "Oaxaca, México",
 
   /** URL pública del sitio (Vercel). Sobrescribir con NEXT_PUBLIC_SITE_URL en producción. */
   siteUrl:
@@ -27,6 +31,8 @@ export const brand = {
     phoneDisplay: "951 319 4133",
     /** Número internacional para WhatsApp (México +52) */
     whatsapp: "529513194133",
+    instagram: "flordelcielo.artesanal",
+    instagramUrl: "https://instagram.com/flordelcielo.artesanal",
     /** Nombre visible en emails transaccionales (Resend) */
     fromName: "Flor del Cielo",
   },

@@ -155,7 +155,7 @@ export function NavbarSearch({ onNavigate }: Props) {
                     setLoading(false);
                   }
                 }}
-                placeholder="Buscar jabones, velas…"
+                placeholder="Buscar jabones, sérums, pomadas…"
                 autoComplete="off"
                 className="h-12 w-full rounded-full border border-brand-gold/35 bg-brand-cream py-2 pl-10 pr-4 text-base text-brand-brown outline-none placeholder:text-brand-brown-muted/70 focus:border-brand-gold sm:h-11 sm:text-sm"
               />

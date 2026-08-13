@@ -1,5 +1,8 @@
 import { CategoryGridView } from "@/components/home/CategoryGridView";
+import { getCategoryCoverImages } from "@/sanity/queries";
 
-export function CategoryGrid() {
-  return <CategoryGridView />;
+export async function CategoryGrid() {
+  const covers = await getCategoryCoverImages();
+
+  return <CategoryGridView covers={covers} />;
 }

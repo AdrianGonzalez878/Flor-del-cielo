@@ -5,7 +5,10 @@ import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { Reveal } from "@/components/motion/Reveal";
 import { buildCatalogUrl } from "@/lib/catalog-url";
 import { getSanityImageUrl, isSanityImageUrl } from "@/lib/sanity-image";
-import type { ProductCategorySlug } from "@/sanity/categories";
+import {
+  getCategoryLabel,
+  type ProductCategorySlug,
+} from "@/sanity/categories";
 import {
   getHomeCatalogBanner,
   getProductsByCategory,
@@ -18,14 +21,14 @@ const categoryContent: Record<
   { title: string; description: string }
 > = {
   jabones: {
-    title: "Jabones",
+    title: getCategoryLabel("jabones"),
     description:
-      "Fórmulas elaboradas para limpiar con suavidad y acompañar el cuidado diario de tu piel.",
+      "Saponificados a mano en lotes pequeños, con colores de achiote, grana cochinilla y cacao.",
   },
   shampoos: {
-    title: "Shampoos",
+    title: getCategoryLabel("shampoos"),
     description:
-      "Ingredientes seleccionados para distintas necesidades del cabello y cuero cabelludo.",
+      "Mezclas de hierbas respaldadas por generaciones de uso tradicional, en presentación de 250 ml.",
   },
 };
 

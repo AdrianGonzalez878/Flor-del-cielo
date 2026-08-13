@@ -1,5 +1,6 @@
 import { groq } from "next-sanity";
 
+import { PRODUCT_CATEGORIES } from "./categories";
 import { getSanityClient } from "./client";
 
 /* ── Tipos ── */
@@ -40,6 +41,23 @@ export type PickupPoint = {
 };
 
 /* ── GROQ ── */
+/** El campo `category` es un string; se traduce al título de la línea. */
+const categoryProjection = `select(
+    defined(category._ref) => {
+      "slug": category->slug.current,
+      "name": category->name
+    },
+    defined(category) => {
+      "slug": category,
+      "name": select(
+        ${PRODUCT_CATEGORIES.map(
+          (c) => `category == "${c.value}" => "${c.title}"`,
+        ).join(",\n        ")},
+        category
+      )
+    }
+  )`;
+
 const productProjection = groq`{
   _id,
   name,
@@ -52,23 +70,7 @@ const productProjection = groq`{
   isActive,
   stock,
   "mainImage": mainImage{ "url": asset->url, "alt": alt },
-  "category": select(
-    defined(category._ref) => {
-      "slug": category->slug.current,
-      "name": category->name
-    },
-    defined(category) => {
-      "slug": category,
-      "name": select(
-        category == "jabones" => "Jabones",
-        category == "shampoos" => "Shampoos",
-        category == "velas" => "Velas",
-        category == "cremas" => "Cremas",
-        category == "aceites" => "Aceites",
-        category
-      )
-    }
-  ),
+  "category": ${categoryProjection},
   collections,
   skinNeeds,
   hairNeeds
@@ -94,23 +96,7 @@ const productBySlugQuery = groq`
     stock,
     "mainImage": mainImage{ "url": asset->url, "alt": alt },
     "gallery": gallery[]{ "url": asset->url, "alt": alt },
-    "category": select(
-      defined(category._ref) => {
-        "slug": category->slug.current,
-        "name": category->name
-      },
-      defined(category) => {
-        "slug": category,
-        "name": select(
-          category == "jabones" => "Jabones",
-          category == "shampoos" => "Shampoos",
-          category == "velas" => "Velas",
-          category == "cremas" => "Cremas",
-          category == "aceites" => "Aceites",
-          category
-        )
-      }
-    ),
+    "category": ${categoryProjection},
     collections,
     skinNeeds,
     hairNeeds
