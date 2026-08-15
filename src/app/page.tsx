@@ -2,17 +2,24 @@ import { BenefitsStrip } from "@/components/home/BenefitsStrip";
 import { BestSellers } from "@/components/home/BestSellers";
 import { BrandInfoSection } from "@/components/home/BrandInfoSection";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
-import { EventsSection } from "@/components/home/EventsSection";
+import { CraftProcess } from "@/components/home/CraftProcess";
+import { HerbalCollection } from "@/components/home/HerbalCollection";
 import { Hero } from "@/components/home/Hero";
 import { HomeCategoryShowcase } from "@/components/home/HomeCategoryShowcase";
+import { HomeClosing } from "@/components/home/HomeClosing";
+import { IngredientsPhilosophy } from "@/components/home/IngredientsPhilosophy";
 import { NewArrivals } from "@/components/home/NewArrivals";
+import { QuizTeaser } from "@/components/home/QuizTeaser";
 import { Testimonials } from "@/components/home/Testimonials";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { getHomeCarouselProducts } from "@/sanity/queries";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
+export default async function Home() {
+  const carousels = await getHomeCarouselProducts();
+
   return (
     <>
       <Navbar />
@@ -20,12 +27,19 @@ export default function Home() {
         <Hero />
         <BenefitsStrip />
         <CategoryGrid />
-        <BestSellers />
-        <NewArrivals />
+        <BestSellers products={carousels.bestsellers} />
+        <HomeCategoryShowcase
+          soaps={carousels.soaps}
+          shampoos={carousels.shampoos}
+        />
+        <CraftProcess />
+        <HerbalCollection products={carousels.herbal} />
         <BrandInfoSection />
-        <HomeCategoryShowcase />
+        <IngredientsPhilosophy />
+        <NewArrivals products={carousels.latest} />
         <Testimonials />
-        <EventsSection />
+        <QuizTeaser />
+        <HomeClosing />
       </main>
       <Footer />
     </>

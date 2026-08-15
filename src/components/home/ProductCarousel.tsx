@@ -5,6 +5,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ProductCard } from "@/components/products/ProductCard";
 import type { Product } from "@/sanity/queries";
 
+/** Con pocos productos el carrusel deja huecos; se muestran centrados. */
+const shortListColumns: Record<number, string> = {
+  1: "max-w-[220px] grid-cols-1 sm:max-w-[300px]",
+  2: "max-w-md grid-cols-2 sm:max-w-xl",
+  3: "max-w-md grid-cols-2 sm:max-w-3xl sm:grid-cols-3",
+};
+
 export function ProductCarousel({ products }: { products: Product[] }) {
   const trackRef = useRef<HTMLUListElement>(null);
   const [canGoBack, setCanGoBack] = useState(false);
@@ -74,6 +81,20 @@ export function ProductCarousel({ products }: { products: Product[] }) {
     }
     dragRef.current = null;
   };
+
+  const shortList = shortListColumns[products.length];
+  if (shortList) {
+    return (
+      <ul
+        className={`mx-auto mt-10 grid gap-3 sm:gap-5 ${shortList}`}
+        aria-label="Productos destacados"
+      >
+        {products.map((product, index) => (
+          <ProductCard key={product._id} product={product} index={index} />
+        ))}
+      </ul>
+    );
+  }
 
   return (
     <div className="relative mt-10">

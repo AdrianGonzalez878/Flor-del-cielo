@@ -26,13 +26,12 @@ const benefits = [
   {
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden>
-        <rect x="3" y="11" width="18" height="10" rx="2" stroke="currentColor" strokeWidth="1.5"/>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-        <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
+        <path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.3 8.7 8.7 0 0 1-4-.95L4 20l1.2-4.3A8.2 8.2 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round"/>
+        <path d="M9.5 9.5c.6 2.4 2.6 4.4 5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
-    title: "Pago seguro",
-    desc: "Transacciones protegidas con Mercado Pago",
+    title: "Pedido acompañado",
+    desc: "Confirmamos cada pedido contigo por WhatsApp",
   },
   {
     icon: (
@@ -41,8 +40,8 @@ const benefits = [
         <path d="M12 13v4M10 15h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
-    title: "Envíos a México",
-    desc: "Entrega a todo el país, empaque cuidadoso",
+    title: "Envío gratis desde $700",
+    desc: "$99 a todo México o recolección en Oaxaca capital",
   },
 ] as const;
 

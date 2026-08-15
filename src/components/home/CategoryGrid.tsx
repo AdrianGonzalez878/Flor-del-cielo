@@ -1,8 +1,13 @@
 import { CategoryGridView } from "@/components/home/CategoryGridView";
-import { getCategoryCoverImages } from "@/sanity/queries";
+import { getCategoryCoverImages, type ProductImage } from "@/sanity/queries";
 
-export async function CategoryGrid() {
-  const covers = await getCategoryCoverImages();
+type Props = {
+  /** Portadas ya resueltas; evita repetir la consulta en la home. */
+  covers?: Record<string, ProductImage>;
+};
 
-  return <CategoryGridView covers={covers} />;
+export async function CategoryGrid({ covers }: Props) {
+  const resolved = covers ?? (await getCategoryCoverImages());
+
+  return <CategoryGridView covers={resolved} />;
 }

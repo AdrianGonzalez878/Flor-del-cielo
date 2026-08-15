@@ -108,6 +108,11 @@ const productsByCollectionQuery = groq`
     | order(_createdAt desc)[0...$limit] ${productProjection}
 `;
 
+const latestProductsQuery = groq`
+  *[_type == "product" && isActive == true]
+    | order(_createdAt desc)[0...$limit] ${productProjection}
+`;
+
 const productsByCategoryQuery = groq`
   *[_type == "product" && isActive == true && category == $category]
     | order(_createdAt desc)[0...$limit] ${productProjection}
@@ -171,6 +176,22 @@ export async function getProductsByCollection(
   }
 }
 
+/** Últimos productos publicados; no depende de etiquetar la colección. */
+export async function getLatestProducts(limit = 12): Promise<Product[]> {
+  const client = getSanityClient();
+  if (!client) return [];
+  try {
+    return await client.fetch<Product[]>(
+      latestProductsQuery,
+      { limit },
+      { cache: "no-store" },
+    );
+  } catch (error) {
+    console.error("Sanity: error fetching latest products", error);
+    return [];
+  }
+}
+
 export async function getProductsByCategory(
   category: string,
   limit = 8,
@@ -187,6 +208,50 @@ export async function getProductsByCategory(
     console.error("Sanity: error fetching products by category", error);
     return [];
   }
+}
+
+function takeUniqueProducts(
+  products: Product[],
+  usedIds: Set<string>,
+  limit: number,
+): Product[] {
+  const unique: Product[] = [];
+  for (const product of products) {
+    if (usedIds.has(product._id)) continue;
+    unique.push(product);
+    usedIds.add(product._id);
+    if (unique.length >= limit) break;
+  }
+  return unique;
+}
+
+/**
+ * Carruseles de la home: cada producto aparece en una sola vitrina,
+ * en este orden: más vendidos → jabones → shampoos → herbolaria → novedades.
+ */
+export async function getHomeCarouselProducts(limit = 12): Promise<{
+  bestsellers: Product[];
+  soaps: Product[];
+  shampoos: Product[];
+  herbal: Product[];
+  latest: Product[];
+}> {
+  const [bestsellers, soaps, shampoos, herbal, latest] = await Promise.all([
+    getProductsByCollection("mas-vendido", limit),
+    getProductsByCategory("jabones", limit * 2),
+    getProductsByCategory("shampoos", limit * 2),
+    getProductsByCollection("herbolaria-tradicional", limit * 2),
+    getLatestProducts(limit * 3),
+  ]);
+
+  const usedIds = new Set<string>();
+  return {
+    bestsellers: takeUniqueProducts(bestsellers, usedIds, limit),
+    soaps: takeUniqueProducts(soaps, usedIds, limit),
+    shampoos: takeUniqueProducts(shampoos, usedIds, limit),
+    herbal: takeUniqueProducts(herbal, usedIds, limit),
+    latest: takeUniqueProducts(latest, usedIds, limit),
+  };
 }
 
 export async function getRelatedProducts(
@@ -208,8 +273,14 @@ export async function getRelatedProducts(
   }
 }
 
+/** Banners destacados de la home; el id en Sanity es `homeCatalogBanner-<key>`. */
+export type HomeCatalogBannerKey =
+  | "jabones"
+  | "shampoos"
+  | "herbolaria-tradicional";
+
 export async function getHomeCatalogBanner(
-  category: "jabones" | "shampoos",
+  category: HomeCatalogBannerKey,
 ): Promise<HomeCatalogBanner | null> {
   const client = getSanityClient();
   if (!client) return null;

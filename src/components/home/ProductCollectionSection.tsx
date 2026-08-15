@@ -1,5 +1,9 @@
 import Link from "next/link";
 
+import {
+  CatalogBanner,
+  type CatalogBannerContent,
+} from "@/components/home/CatalogBanner";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { Reveal } from "@/components/motion/Reveal";
 import { buildCatalogUrl } from "@/lib/catalog-url";
@@ -65,20 +69,33 @@ type Props = {
   eyebrow: string;
   title: string;
   collection: ProductCollectionSlug;
+  /** Descripción opcional bajo el título. */
+  description?: string;
   linkLabel?: string;
   limit?: number;
   variant?: "cream" | "light";
+  /** Productos ya resueltos; evita consultar por colección. */
+  products?: Product[];
+  /** Destino del CTA cuando no corresponde al filtro de colección. */
+  href?: string;
+  /** Banner destacado a todo el ancho, editable desde Sanity. */
+  banner?: CatalogBannerContent;
 };
 
 export async function ProductCollectionSection({
   eyebrow,
   title,
   collection,
+  description,
   linkLabel = "Ver colección",
   limit = 12,
   variant = "cream",
+  products: providedProducts,
+  href,
+  banner,
 }: Props) {
-  const productsFromSanity = await getProductsByCollection(collection, limit);
+  const productsFromSanity =
+    providedProducts ?? (await getProductsByCollection(collection, limit));
   const fallback = fallbackProducts.filter((p) =>
     (p.collections ?? []).includes(collection),
   );
@@ -92,15 +109,24 @@ export async function ProductCollectionSection({
       : "border-b border-brand-gold/20 bg-brand-cream";
 
   return (
-    <section className={`py-16 sm:py-20 ${bgClass}`}>
+    <section
+      className={`${banner ? "pb-16 sm:pb-20" : "py-16 sm:py-20"} ${bgClass}`}
+    >
+      {banner && <CatalogBanner {...banner} />}
+
       <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-12">
-        <Reveal className="text-center">
+        <Reveal className={`text-center ${banner ? "mt-12" : ""}`}>
           <p className="font-script text-2xl text-brand-gold-dark">
             {eyebrow}
           </p>
           <h2 className="mt-1 font-serif text-3xl font-semibold text-brand-brown sm:text-4xl">
             {title}
           </h2>
+          {description && (
+            <p className="mx-auto mt-3 max-w-2xl leading-relaxed text-brand-brown-muted">
+              {description}
+            </p>
+          )}
         </Reveal>
 
         {products.length > 0 ? (
@@ -117,7 +143,7 @@ export async function ProductCollectionSection({
 
         <div className="mt-8 text-center">
           <Link
-            href={buildCatalogUrl({ coleccion: collection })}
+            href={href ?? buildCatalogUrl({ coleccion: collection })}
             className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-brand-brown px-7 text-sm font-semibold text-brand-cream-light transition-colors hover:bg-brand-brown-dark"
           >
             {linkLabel}

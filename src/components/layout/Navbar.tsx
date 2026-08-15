@@ -16,7 +16,7 @@ const navLinks = [
   { href: "/", label: "Inicio" },
   { href: "/test", label: "Test" },
   { href: "/puntos-de-entrega", label: "Puntos de entrega" },
-  { href: "/#eventos", label: "Eventos" },
+  { href: "/eventos", label: "Eventos" },
 ] as const;
 
 function linkClassName(active: boolean) {

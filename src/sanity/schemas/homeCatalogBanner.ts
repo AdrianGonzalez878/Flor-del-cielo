@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity";
 
 export const homeCatalogBannerType = defineType({
   name: "homeCatalogBanner",
-  title: "Banner de categoría en home",
+  title: "Banner destacado en home",
   type: "document",
   fields: [
     defineField({
@@ -35,7 +35,7 @@ export const homeCatalogBannerType = defineType({
     },
     prepare({ title, media }) {
       return {
-        title: title || "Banner de categoría en home",
+        title: title || "Banner destacado en home",
         media,
       };
     },

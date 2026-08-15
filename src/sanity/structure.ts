@@ -8,10 +8,10 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("product").title("Productos"),
       S.documentTypeListItem("pickupPoint").title("Puntos de entrega"),
       S.listItem()
-        .title("Banners de categorías en home")
+        .title("Banners destacados en home")
         .child(
           S.list()
-            .title("Banners de categorías en home")
+            .title("Banners destacados en home")
             .items([
               S.listItem()
                 .title("Banner de Jabones")
@@ -28,6 +28,14 @@ export const structure: StructureResolver = (S) =>
                     .schemaType("homeCatalogBanner")
                     .documentId("homeCatalogBanner-shampoos")
                     .title("Banner de Shampoos"),
+                ),
+              S.listItem()
+                .title("Banner de Herbolaria tradicional")
+                .child(
+                  S.document()
+                    .schemaType("homeCatalogBanner")
+                    .documentId("homeCatalogBanner-herbolaria-tradicional")
+                    .title("Banner de Herbolaria tradicional"),
                 ),
             ]),
         ),

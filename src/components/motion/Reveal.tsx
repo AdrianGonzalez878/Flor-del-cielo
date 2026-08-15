@@ -12,6 +12,8 @@ type Props = {
   duration?: number;
   /** Dirección desde la que entra el elemento */
   from?: Direction;
+  /** Usa `li` cuando el contenedor es una lista, para no romper el HTML. */
+  as?: "div" | "li";
 };
 
 export function Reveal({
@@ -20,9 +22,12 @@ export function Reveal({
   delay = 0,
   duration = 0.55,
   from = "up",
+  as = "div",
 }: Props) {
+  const Tag = as === "li" ? motion.li : motion.div;
+
   return (
-    <motion.div
+    <Tag
       initial={false}
       whileInView={{ opacity: 1, x: 0, y: 0 }}
       viewport={{ once: true, amount: 0.1 }}
@@ -35,6 +40,6 @@ export function Reveal({
       data-reveal-from={from}
     >
       {children}
-    </motion.div>
+    </Tag>
   );
 }

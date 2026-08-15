@@ -10,9 +10,14 @@ import {
 import { PRODUCT_COLLECTIONS } from "@/sanity/collections";
 
 const featuredCollections = PRODUCT_COLLECTIONS.filter((c) =>
-  ["mas-vendido", "novedades", "rutina-diaria", "bebes-ninos"].includes(
-    c.value,
-  ),
+  [
+    "mas-vendido",
+    "novedades",
+    "rutina-diaria",
+    "herbolaria-tradicional",
+    "solidos",
+    "bebes-ninos",
+  ].includes(c.value),
 );
 
 /** Las 14 líneas agrupadas en tres columnas para no alargar el pie. */
@@ -143,7 +148,7 @@ export function Footer() {
                 </FooterLink>
               </li>
               <li>
-                <FooterLink href="/#eventos">Eventos y regalos</FooterLink>
+                <FooterLink href="/eventos">Eventos y regalos</FooterLink>
               </li>
               <li>
                 <FooterLink href="/#nosotros">Nuestra esencia</FooterLink>
