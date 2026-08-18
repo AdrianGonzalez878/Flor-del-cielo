@@ -89,7 +89,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
       isReady,
       addItem: (item, quantity = 1) => {
         setItems((current) => {
-          const existing = current.find((cartItem) => cartItem._id === item._id);
+          const isSameItem = (cartItem: CartItem) =>
+            cartItem._id === item._id || cartItem.slug === item.slug;
+          const existing = current.find(isSameItem);
           const availableStock = item.stock ?? Number.POSITIVE_INFINITY;
           if (!existing) {
             return [
@@ -100,9 +102,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
             ];
           }
           return current.map((cartItem) =>
-            cartItem._id === item._id
+            isSameItem(cartItem)
               ? {
                   ...cartItem,
+                  ...item,
                   stock: item.stock ?? cartItem.stock,
                   quantity: Math.min(
                     cartItem.quantity + Math.max(quantity, 1),

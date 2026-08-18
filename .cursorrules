@@ -15,7 +15,7 @@ Tono visual: orgánico, premium, cálido y natural.
 - **Next.js 16** (App Router), React 19, TypeScript, Tailwind CSS v4.
 - **Sanity** — catálogo y pedidos; Studio en `/studio`.
 - **Framer Motion** — animaciones sutiles (fade-in, slide-up).
-- **Pendiente:** Shadcn UI (formularios/checkout), Mercado Pago, Resend.
+- **Pendiente:** Shadcn UI (formularios). Mercado Pago y Resend (emails de pedido) integrados.
 - Dev local: `npm run dev` desde la raíz del repo (usa webpack, no Turbopack).
 - Convenciones Next.js: leer `AGENTS.md` y `node_modules/next/dist/docs/` antes de APIs nuevas.
 

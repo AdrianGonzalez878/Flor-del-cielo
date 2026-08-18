@@ -79,6 +79,7 @@ export default async function ProductoDetallePage({ params }: PageProps) {
                 />
 
                 <ProductPurchasePanel
+                  _id={product._id}
                   name={product.name}
                   slug={product.slug}
                   categoryName={product.category?.name}

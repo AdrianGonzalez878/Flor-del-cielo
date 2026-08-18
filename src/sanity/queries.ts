@@ -133,6 +133,62 @@ const homeCatalogBannerQuery = groq`
   }
 `;
 
+const productsByIdsQuery = groq`
+  *[_type == "product" && (_id in $ids || slug.current in $ids)] ${productProjection}
+`;
+
+const pickupPointByIdQuery = groq`
+  *[_type == "pickupPoint" && _id == $id][0] {
+    _id,
+    name,
+    address,
+    schedule,
+    instructions,
+    mapUrl
+  }
+`;
+
+const orderProjection = groq`{
+  _id,
+  orderNumber,
+  status,
+  paymentStatus,
+  paymentId,
+  customerName,
+  customerEmail,
+  customerPhone,
+  items[] {
+    name,
+    quantity,
+    unitPrice,
+    subtotal
+  },
+  subtotal,
+  shippingCost,
+  total,
+  deliveryMethod,
+  pickupPointName,
+  shippingAddress {
+    street,
+    neighborhood,
+    city,
+    state,
+    zip,
+    country,
+    notes
+  },
+  customerEmailSentAt,
+  adminEmailSentAt
+}`;
+
+const orderByNumberQuery = groq`
+  *[_type == "order" && orderNumber == $orderNumber][0] ${orderProjection}
+`;
+
+const orderByPaymentIdQuery = groq`
+  *[_type == "order" && paymentId == $paymentId][0] ${orderProjection}
+`;
+
 const pickupPointsQuery = groq`
   *[_type == "pickupPoint" && isActive == true]
     | order(_createdAt asc) {
@@ -308,6 +364,105 @@ export async function getPickupPoints(): Promise<PickupPoint[]> {
   } catch (error) {
     console.error("Sanity: error fetching pickup points", error);
     return [];
+  }
+}
+
+export async function getPickupPointById(
+  id: string,
+): Promise<PickupPoint | null> {
+  const client = getSanityClient();
+  if (!client || !id) return null;
+  try {
+    return await client.fetch<PickupPoint | null>(
+      pickupPointByIdQuery,
+      { id },
+      { cache: "no-store" },
+    );
+  } catch (error) {
+    console.error("Sanity: error fetching pickup point", error);
+    return null;
+  }
+}
+
+export async function getProductsByIds(ids: string[]): Promise<Product[]> {
+  const client = getSanityClient();
+  if (!client || ids.length === 0) return [];
+  try {
+    return await client.fetch<Product[]>(
+      productsByIdsQuery,
+      { ids },
+      { cache: "no-store" },
+    );
+  } catch (error) {
+    console.error("Sanity: error fetching products by id", error);
+    return [];
+  }
+}
+
+export type OrderSummary = {
+  _id: string;
+  orderNumber: string;
+  status?: string;
+  paymentStatus?: string;
+  paymentId?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  items?: Array<{
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }>;
+  subtotal?: number;
+  shippingCost?: number;
+  total?: number;
+  deliveryMethod?: string;
+  pickupPointName?: string;
+  shippingAddress?: {
+    street?: string;
+    neighborhood?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+    country?: string;
+    notes?: string;
+  };
+  customerEmailSentAt?: string;
+  adminEmailSentAt?: string;
+};
+
+export async function getOrderByNumber(
+  orderNumber: string,
+): Promise<OrderSummary | null> {
+  const client = getSanityClient();
+  if (!client || !orderNumber) return null;
+  try {
+    return await client.fetch<OrderSummary | null>(
+      orderByNumberQuery,
+      { orderNumber },
+      { cache: "no-store" },
+    );
+  } catch (error) {
+    console.error("Sanity: error fetching order by number", error);
+    return null;
+  }
+}
+
+export async function getOrderByPaymentId(
+  paymentId: string,
+): Promise<OrderSummary | null> {
+  const client = getSanityClient();
+  if (!client || !paymentId) return null;
+  try {
+    return await client.fetch<OrderSummary | null>(
+      orderByPaymentIdQuery,
+      { paymentId },
+      { cache: "no-store" },
+    );
+  } catch (error) {
+    console.error("Sanity: error fetching order by payment id", error);
+    return null;
   }
 }
 

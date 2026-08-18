@@ -30,8 +30,8 @@ const benefits = [
         <path d="M9.5 9.5c.6 2.4 2.6 4.4 5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
-    title: "Pedido acompañado",
-    desc: "Confirmamos cada pedido contigo por WhatsApp",
+    title: "Pago seguro",
+    desc: "Tarjeta, OXXO o transferencia con Mercado Pago",
   },
   {
     icon: (

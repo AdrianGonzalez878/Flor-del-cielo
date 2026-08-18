@@ -132,10 +132,17 @@ export function getBrandCssVariables(): Record<string, string> {
 }
 
 /**
- * Config sugerida para Resend (from + reply-to).
- * Ejemplo: `from: formatResendFrom()` en API routes de confirmación de pedido.
+ * Remitente Resend: usa RESEND_FROM_EMAIL si está definido.
+ * Acepta `hola@dominio.com` o `Flor del Cielo <hola@dominio.com>`.
  */
 export function formatResendFrom() {
+  const configured = process.env.RESEND_FROM_EMAIL?.trim();
+  if (configured) {
+    if (configured.includes("<") && configured.includes(">")) {
+      return configured;
+    }
+    return `${brand.contact.fromName} <${configured}>`;
+  }
   return `${brand.contact.fromName} <${brand.contact.email}>`;
 }
 

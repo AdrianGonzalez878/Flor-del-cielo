@@ -12,6 +12,7 @@ import { getCollectionLabel } from "@/sanity/collections";
 import { getHairNeedLabel, getSkinNeedLabel } from "@/sanity/needs";
 
 type Props = {
+  _id: string;
   name: string;
   slug: string;
   categoryName?: string;
@@ -78,6 +79,7 @@ function Accordion({
 }
 
 export function ProductPurchasePanel({
+  _id,
   name,
   slug,
   categoryName,
@@ -104,7 +106,8 @@ export function ProductPurchasePanel({
   const safeHairNeeds = hairNeeds ?? [];
   const safeIngredients = ingredients ?? [];
   const inStock = stock > 0;
-  const quantityInCart = items.find((item) => item._id === slug)?.quantity ?? 0;
+  const quantityInCart =
+    items.find((item) => item._id === _id || item.slug === slug)?.quantity ?? 0;
   const availableToAdd = Math.max(stock - quantityInCart, 0);
   const discount =
     compareAtPrice && compareAtPrice > price
@@ -133,7 +136,7 @@ export function ProductPurchasePanel({
     const quantityToAdd = Math.min(quantity, availableToAdd);
     addItem(
       {
-        _id: slug,
+        _id,
         name,
         slug,
         price,
@@ -336,8 +339,7 @@ export function ProductPurchasePanel({
             <li>Envíos a todo México con empaque cuidadoso.</li>
             <li>Productos elaborados a mano en lotes pequeños.</li>
             <li>
-              Por ahora puedes pedir por WhatsApp; el carrito con Mercado Pago
-              estará disponible pronto.
+              Pago seguro con Mercado Pago: tarjeta, OXXO o transferencia.
             </li>
           </ul>
         </Accordion>

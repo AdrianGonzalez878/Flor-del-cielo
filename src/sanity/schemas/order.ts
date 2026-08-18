@@ -103,6 +103,12 @@ export const orderType = defineType({
       description: "ID que devuelve Mercado Pago en el webhook.",
     }),
     defineField({
+      name: "preferenceId",
+      title: "ID de preferencia",
+      type: "string",
+      group: "payment",
+    }),
+    defineField({
       name: "paymentStatus",
       title: "Estado del pago",
       type: "string",
@@ -110,6 +116,24 @@ export const orderType = defineType({
       options: {
         list: ["approved", "pending", "rejected", "refunded"],
       },
+    }),
+    defineField({
+      name: "deliveryMethod",
+      title: "Método de entrega",
+      type: "string",
+      group: "shipping",
+      options: {
+        list: [
+          { title: "Envío a domicilio", value: "shipping" },
+          { title: "Punto de entrega", value: "pickup" },
+        ],
+      },
+    }),
+    defineField({
+      name: "pickupPointName",
+      title: "Punto de entrega",
+      type: "string",
+      group: "shipping",
     }),
     defineField({
       name: "shippingAddress",
@@ -122,6 +146,20 @@ export const orderType = defineType({
       title: "Guía de envío",
       type: "string",
       group: "shipping",
+    }),
+    defineField({
+      name: "customerEmailSentAt",
+      title: "Email al cliente enviado",
+      type: "datetime",
+      group: "payment",
+      readOnly: true,
+    }),
+    defineField({
+      name: "adminEmailSentAt",
+      title: "Email al admin enviado",
+      type: "datetime",
+      group: "payment",
+      readOnly: true,
     }),
     defineField({
       name: "createdAt",

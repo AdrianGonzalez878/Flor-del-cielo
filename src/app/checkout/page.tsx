@@ -10,11 +10,19 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Finalizar pedido",
-  description: "Completa tus datos para realizar tu pedido por WhatsApp.",
+  description:
+    "Completa tus datos y paga con Mercado Pago: tarjeta, OXXO o transferencia.",
 };
 
-export default async function CheckoutPage() {
-  const pickupPoints = await getPickupPoints();
+type PageProps = {
+  searchParams: Promise<{ pago?: string }>;
+};
+
+export default async function CheckoutPage({ searchParams }: PageProps) {
+  const [pickupPoints, params] = await Promise.all([
+    getPickupPoints(),
+    searchParams,
+  ]);
 
   return (
     <>
@@ -29,10 +37,17 @@ export default async function CheckoutPage() {
               Finaliza tu pedido
             </h1>
             <p className="mt-2 text-sm text-brand-brown-muted sm:mt-3 sm:text-base">
-              Elige envío o recolección para completar tu compra.
+              Elige envío o recolección y paga con Mercado Pago.
             </p>
           </Reveal>
-          <CheckoutForm pickupPoints={pickupPoints} />
+          <CheckoutForm
+            pickupPoints={pickupPoints}
+            initialError={
+              params.pago === "error"
+                ? "El pago no se completó. Puedes intentarlo de nuevo."
+                : null
+            }
+          />
         </div>
       </main>
       <Footer />
