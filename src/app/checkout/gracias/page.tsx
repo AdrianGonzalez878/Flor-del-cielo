@@ -1,20 +1,12 @@
 import type { Metadata } from "next";
-import nextDynamic from "next/dynamic";
 import Link from "next/link";
 
+import { CheckoutThanksPaymentStatus } from "@/components/cart/CheckoutThanksPaymentStatus";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { getWhatsAppUrl } from "@/lib/brand";
 import { MERCADOPAGO_PUBLIC_KEY } from "@/lib/mercadopago";
 import { getOrderByNumber } from "@/sanity/queries";
-
-const PaymentStatusScreen = nextDynamic(
-  () =>
-    import("@/components/cart/PaymentStatusScreen").then(
-      (module) => module.PaymentStatusScreen,
-    ),
-  { ssr: false },
-);
 
 export const dynamic = "force-dynamic";
 
@@ -75,7 +67,7 @@ export default async function CheckoutThanksPage({ searchParams }: PageProps) {
 
             {paymentId && MERCADOPAGO_PUBLIC_KEY && (
               <div className="mt-8 text-left">
-                <PaymentStatusScreen
+                <CheckoutThanksPaymentStatus
                   publicKey={MERCADOPAGO_PUBLIC_KEY}
                   paymentId={paymentId}
                 />
